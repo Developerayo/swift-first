@@ -18,6 +18,7 @@ struct ContentView: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                 
+                
                 List {
                     ForEach(tasks) { task in
                         HStack {
@@ -30,13 +31,19 @@ struct ContentView: View {
                             }
                         }
                         .swipeActions {
+                            Button("Delete") {
+                                if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+                                    tasks.remove(at: index)
+                                    saveTasks()
+                                }
+                            }
+                            .tint(.red)
                             Button(task.isCompleted ? "Incomplete" : "Complete") {
                                 toggleTaskCompletion(task)
                             }
                             .tint(task.isCompleted ? .orange : .green)
                         }
                     }
-                    .onDelete(perform: deleteTask)
                 }
             }
             .navigationTitle("To-Do List")
