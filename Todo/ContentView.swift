@@ -13,28 +13,36 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(tasks) { task in
-                    HStack {
-                        Text(task.name)
-                        Spacer()
-                        if task.isCompleted {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
+            VStack {
+                TextField("New task...", text: $newTask, onCommit: addTask)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+                
+                List {
+                    ForEach(tasks) { task in
+                        HStack {
+                            Text(task.name)
+                                .strikethrough(task.isCompleted, color: .black)
+                            Spacer()
+                            if task.isCompleted {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                            }
+                        }
+                        .swipeActions {
+                            Button(task.isCompleted ? "Incomplete" : "Complete") {
+                                toggleTaskCompletion(task)
+                            }
+                            .tint(task.isCompleted ? .orange : .green)
                         }
                     }
-                    .onTapGesture {
-                        toggleTaskCompletion(task)
-                    }
+                    .onDelete(perform: deleteTask)
                 }
-                .onDelete(perform: deleteTask)
             }
             .navigationTitle("To-Do List")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Add") {
-                        addTask()
-                    }
+                    EditButton()
                 }
             }
             .onAppear {
